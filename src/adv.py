@@ -1,4 +1,5 @@
 from room import Room
+from player import Player
 
 # Declare all the rooms
 
@@ -38,6 +39,7 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
+p = Player("Nkechi", room['outside'])
 
 # Write a loop that:
 #
@@ -49,3 +51,59 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+directions = {
+    'n': 'n_to',
+    's': 's_to',
+    'e': 'e_to',
+    'w': 'w_to',
+    'north': 'n_to',
+    'south': 's_to',
+    'west': 'w_to',
+    'east': 'e_to'
+}
+
+
+def create_player():
+    player_name = input("What's your name?: ").capitalize()
+    player = Player(player_name, room['outside'])
+    print(f"Hi {player.name}, I want to play a game 🤡")
+    return player
+
+
+def get_new_room(p, inp):
+    try:
+        return getattr(p.current_room, directions[inp])
+    except KeyError:
+        print("That's not a direction you mug")
+        return False
+    except AttributeError:
+        print("You canne go that way")
+        return False
+
+
+def print_details(p):
+    print("Current location: ", p.current_room.name)
+    print("What's going on here: ", p.current_room.description)
+
+
+def run_game():
+    player = create_player()
+
+    for i in range(10):
+        print_details(player)
+
+        inp = input("Which direction to you want to go?: ")
+
+        if inp == "q":
+            break
+
+        new_room = get_new_room(p, inp)
+
+        if new_room:
+            p.current_room = new_room
+
+        if i == 9:
+            print("You've been ferreting around too long, game over.")
+
+
+run_game()
